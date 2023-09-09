@@ -1,0 +1,3 @@
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\x64\Debug\Classy Clash.vcxproj.CopyComplete
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\x64\Debug\Classy Clash.exe
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\x64\Debug\raylib.dll
