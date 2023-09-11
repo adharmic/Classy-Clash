@@ -1,2 +1,4 @@
 ﻿  main.cpp
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\main.cpp(18,28): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\main.cpp(17,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
   Classy Clash.vcxproj -> C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\x64\Debug\Classy Clash.exe
