@@ -1,9 +1,11 @@
 #include "raylib.h"
 #include "raymath.h"
+#include "Character.h"
+
+const int windowDimensions[2]{ 384, 384 };
 
 int main()
 {
-	const int windowDimensions[2]{ 384, 384 };
 
 	InitWindow(windowDimensions[0], windowDimensions[1], "Classy Clash");
 	SetTargetFPS(60);
@@ -11,25 +13,11 @@ int main()
 	Texture2D mapTexture = LoadTexture("tileset/classy_clash.png");
 	Vector2 mapPos{ 0.0, 0.0 };
 
-	const float moveSpeed{ 5.0f };
+	const float mapScale{ 4.f };
 
 	// Frame data for various animations
 	const float maxFramesIdle{ 5.f };
 	const float maxFramesRun{ 8.f };
-
-	Texture2D ballAndChain;
-
-	Texture2D bCIdle = LoadTexture("characters/enemy/idle.png");
-	Vector2 bCPosIdle{
-		(float)windowDimensions[0] / 2.0f - 4.0f * (0.5f * (float)bCIdle.width),
-		(float)windowDimensions[1] / 2.0f - 4.0f * (0.5f * (float)bCIdle.height / maxFramesIdle)
-	};
-
-	Texture2D bCRun = LoadTexture("characters/enemy/run.png");
-	Vector2 bcPosRun{
-		(float)windowDimensions[0] / 2.0f - 4.0f * (0.5f * (float)bCIdle.width),
-		(float)windowDimensions[1] / 2.0f - 4.0f * (0.5f * (float)bCIdle.height / maxFramesRun)
-	};
 
 	// 1 = facing right, -1 = facing left
 	float rightLeft{ 1.f };
@@ -40,61 +28,28 @@ int main()
 	int maxFrames{ 5 };
 	const float updateTime{ 1.f / 12.f };
 
+	Character player{ };
+	player.setScreenPos(windowDimensions[0], windowDimensions[1]);
+
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
 		ClearBackground(WHITE);
 
-		Vector2 direction{ };
+		mapPos = Vector2Scale(player.getWorldPos(), -1.f);
 
-		if (IsKeyDown(KEY_A)) direction.x -= 1.0;
-		if (IsKeyDown(KEY_D)) direction.x += 1.0;
-		if (IsKeyDown(KEY_W)) direction.y -= 1.0;
-		if (IsKeyDown(KEY_S)) direction.y += 1.0;
-		if (Vector2Length(direction) != 0.0)
+		DrawTextureEx(mapTexture, mapPos, 0.0, mapScale, WHITE);
+		player.tick(GetFrameTime());
+		if (player.getWorldPos().x < 0.f ||
+			player.getWorldPos().y < 150.f ||
+			player.getWorldPos().x + windowDimensions[0] > mapTexture.width * mapScale ||
+			player.getWorldPos().y + windowDimensions[1] > mapTexture.height * mapScale)
 		{
-			ballAndChain = bCRun;
-			maxFrames = maxFramesRun;
-			mapPos = Vector2Subtract(mapPos, Vector2Scale(Vector2Normalize(direction), moveSpeed));
-			if (direction.x != 0)
-				direction.x < 0.f ? rightLeft = -1.f : rightLeft = 1.f;
+			player.undoMovement();
 		}
-		else
-		{
-			ballAndChain = bCIdle;
-			maxFrames = maxFramesIdle;
-		}
-
-		DrawTextureEx(mapTexture, mapPos, 0.0, 4.0, WHITE);
-
-		// Update animation frame
-		runningTime += GetFrameTime();
-		if (runningTime >= updateTime)
-		{
-			frame++;
-			runningTime = 0.f;
-			frame %= maxFrames;
-		}
-
-		// Draw character
-		Rectangle ballSource{
-			0.0,
-			frame * (float)bCIdle.height / 5.0f,
-			rightLeft * (float)bCIdle.width,
-			(float)bCIdle.height / 5.0f
-		};
-		Rectangle ballDest{
-			bCPosIdle.x,
-			bCPosIdle.y,
-			4.0f * (float)bCIdle.width,
-			4.0f * (float)bCIdle.height / 5.0f
-		};
-		Vector2 ballOrigin{ 0.0, 0.0 };
-		DrawTexturePro(ballAndChain, ballSource, ballDest, ballOrigin, 0.0, WHITE);
 
 		EndDrawing();
 	}
-	UnloadTexture(bCIdle);
 	UnloadTexture(mapTexture);
 	CloseWindow();
 }
