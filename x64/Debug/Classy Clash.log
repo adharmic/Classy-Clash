@@ -1,4 +1,10 @@
-﻿  Character.cpp
-  main.cpp
-  Generating Code...
+﻿  main.cpp
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\main.cpp(101,33): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\main.cpp(101,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\main.cpp(108,31): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\main.cpp(108,25): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\main.cpp(116,41): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\main.cpp(116,35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\main.cpp(120,38): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\main.cpp(120,32): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
   Classy Clash.vcxproj -> C:\Users\Adithya\source\repos\Raylib Udemy\Classy Clash\x64\Debug\Classy Clash.exe

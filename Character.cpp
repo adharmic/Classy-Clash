@@ -1,68 +1,60 @@
 #include "Character.h"
 #include "raymath.h"
 
-Character::Character()
+Character::Character(int winWidth, int winHeight)
+	: windowWidth(winWidth)
+	, windowHeight(winHeight)
 {
-	width = 32.f;
-	height = 32.f;
+	width = (float)texture.width / maxFrames;
+	height = (float)texture.height;
 }
 
-void Character::setScreenPos(int winWidth, int winHeight)
+Vector2 Character::getScreenPos()
 {
-	screenPos = {
-		(float)winWidth / 2.0f - 4.0f * (0.5f * (float)currentAnimation.texture.width),
-		(float)winHeight / 2.0f - 4.0f * (0.5f * (float)currentAnimation.texture.height / currentAnimation.frames)
+	return {
+		(static_cast<float>(windowWidth) / 2.0f - scale * (0.5f * texture.width / maxFrames)),
+		(static_cast<float>(windowHeight) / 2.0f - scale * (0.5f * texture.height))
 	};
 }
 
 void Character::tick(float deltaTime)
 {
-	worldPosLastFrame = worldPos;
-	Vector2 direction{ };
+	if (!getAlive()) return;
 
-	if (IsKeyDown(KEY_A)) direction.x -= 1.0;
-	if (IsKeyDown(KEY_D)) direction.x += 1.0;
-	if (IsKeyDown(KEY_W)) direction.y -= 1.0;
-	if (IsKeyDown(KEY_S)) direction.y += 1.0;
-	if (Vector2Length(direction) != 0.0)
+	if (IsKeyDown(KEY_A)) velocity.x -= 1.0;
+	if (IsKeyDown(KEY_D)) velocity.x += 1.0;
+	if (IsKeyDown(KEY_W)) velocity.y -= 1.0;
+	if (IsKeyDown(KEY_S)) velocity.y += 1.0;
+	BaseCharacter::tick(deltaTime);
+
+	Vector2 origin{ };
+	Vector2 offset{ };
+	float rotation{ };
+	if (rightLeft > 0.f)
 	{
-		currentAnimation = run;
-		worldPos = Vector2Add(worldPos, Vector2Scale(Vector2Normalize(direction), speed));
-		if (direction.x != 0)
-			direction.x < 0.f ? rightLeft = -1.f : rightLeft = 1.f;
+		origin = { 0.f, weapon.height * scale };
+		offset = { 35.f, 55.f };
+		weaponCollisionRec = { getScreenPos().x + offset.x, getScreenPos().y + offset.y - weapon.height * scale, weapon.width * scale, weapon.height * scale };
+		rotation = IsMouseButtonDown(MOUSE_LEFT_BUTTON) ? 35.f : 0.f;
 	}
 	else
 	{
-		currentAnimation = idle;
+		origin = { weapon.width * scale, weapon.height * scale };
+		offset = { 25.f, 55.f };
+		weaponCollisionRec = { getScreenPos().x + offset.x - weapon.width * scale, getScreenPos().y + offset.y - weapon.height * scale, weapon.width * scale, weapon.height * scale };
+		rotation = IsMouseButtonDown(MOUSE_LEFT_BUTTON) ? -35.f : 0.f;
 	}
-	maxFrames = currentAnimation.frames;
-
-	runningTime += deltaTime;
-	if (runningTime >= updateTime)
-	{
-		frame++;
-		runningTime = 0.f;
-		frame %= maxFrames;
-	}
-
-	// Draw character
-	Rectangle ballSource{
-		0.0,
-		frame * (float)idle.texture.height / 5.0f,
-		rightLeft * (float)idle.texture.width,
-		(float)idle.texture.height / 5.0f
-	};
-	Rectangle ballDest{
-		screenPos.x,
-		screenPos.y,
-		4.0f * (float)idle.texture.width,
-		4.0f * (float)idle.texture.height / 5.0f
-	};
-	Vector2 ballOrigin{ 0.0, 0.0 };
-	DrawTexturePro(currentAnimation.texture, ballSource, ballDest, ballOrigin, 0.0, WHITE);
+	// Draw sword
+	Rectangle source{ 0.f, 0.f, static_cast<float>(weapon.width) * rightLeft, static_cast<float>(weapon.height) };
+	Rectangle dest{ getScreenPos().x + offset.x, getScreenPos().y + offset.y, weapon.width * scale, weapon.height * scale };
+	DrawTexturePro(weapon, source, dest, origin, rotation, WHITE);
 }
 
-void Character::undoMovement()
+void Character::takeDamage(const float& damage)
 {
-	worldPos = worldPosLastFrame;
+	health -= damage;
+	if (health < 0.f)
+	{
+		setAlive(false);
+	}
 }
